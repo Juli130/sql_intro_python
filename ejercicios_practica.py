@@ -54,7 +54,7 @@ def create_schema():
     conn.close()
 
 
-def fill():
+def fill(name, age, grade, tutor):
     print('Completemos esta tablita!')
     # Llenar la tabla de la secundaria con al menos 5 estudiantes
     # Cada estudiante tiene los posibles campos:
@@ -67,13 +67,32 @@ def fill():
     # Se debe utilizar la sentencia INSERT.
     # Observar que hay campos como "grade" y "tutor" que no son obligatorios
     # en el schema creado, puede obivar en algunos casos completar esos campos
+    conn = sqlite3.connect('secundaria.db')
 
+    c = conn.cursor()
+
+    value = [name, age, grade, tutor ]
+    c.execute("""
+            INSERT INTO secundaria (name, age, grade, tutor)
+            VALUES(?,?,?,?); """, value )
+    conn.commit
+    conn.close
 
 def fetch():
     print('Comprobemos su contenido, ¿qué hay en la tabla?')
     # Utilizar la sentencia SELECT para imprimir en pantalla
     # todas las filas con todas sus columnas
     # Utilizar fetchone para imprimir de una fila a la vez
+    conn = sqlite3.connect('secundaria.db')
+    c = conn.cursor()
+    c.execute('SELECT * FROM secundaria')
+    while True:
+        row = c.fetchone
+        if row == None:
+            break
+        print(row)
+    conn.commit
+    conn.close
 
 
 def search_by_grade(grade):
@@ -84,8 +103,14 @@ def search_by_grade(grade):
     # De la lista de esos estudiantes el SELECT solo debe traer
     # las siguientes columnas por fila encontrada:
     # id / name / age
-
-
+    conn = sqlite3.connect('secundaria.db')
+    c = conn.cursor()
+    c.execute('SELECT id, name, age FROM secundaria WHERE  grade = 5')
+    data = c.fetchall
+    print(data)
+    conn.commit
+    conn.close
+    
 def insert(grade):
     print('Nuevos ingresos!')
     # Utilizar la sentencia INSERT para ingresar nuevos estudiantes
